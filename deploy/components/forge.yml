@@ -1,0 +1,19 @@
+uat:
+  # Site ID
+  id: *****95
+  name: uat.domain.com
+  # Server ID
+  server: ****19
+  quick-deploy: false
+  webhooks: []
+  daemons: []
+
+production:
+  # Site ID
+  id: *****41
+  name: domain.com
+  # Server ID
+  server: ****13
+  quick-deploy: false
+  webhooks: []
+  daemons: []
