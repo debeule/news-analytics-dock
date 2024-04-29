@@ -1,16 +1,15 @@
-version: '1.0'
 services:
-  app:
-    image: &app-image ghcr.io/debeule/news-analytics-dock/hub:latest
+  hub:
+    image: &hub-image ghcr.io/debeule/news-analytics-dock/hub:latest
     build:
       context: .
-      dockerfile: deploy/components/app/workspace.Dockerfile
-    container_name: app
+      dockerfile: deploy/components/hub/workspace.Dockerfile
+    container_name: hub
     restart: unless-stopped
     tty: true
-    volumes: &app-volumes
-      - ./:/code:delegated
-      - ./deploy/components/app/php.ini:/usr/local/etc/php/conf.d/php.ini
+    volumes: &hub-volumes
+      - /hub:/code:delegated
+      - ./deploy/components/hub/php.ini:/usr/local/etc/php/conf.d/php.ini
     networks:
       - backend
     depends_on:
@@ -18,6 +17,22 @@ services:
       - db-testing
       - worker
       - redis
+
+  scraper:
+    image: ghcr.io/debeule/news-analytics-dock/scraper:latest
+    build:
+        context: .
+        dockerfile: deploy/components/scraper/workspace.Dockerfile
+    ports:
+        - "5000:5000"
+        
+    volumes:
+        - /home/debeule/website.int/:/app
+    networks:
+        - sail
+    depends_on:
+        - mysql
+        - redis
 
   server:
     image: nginx:alpine
@@ -33,7 +48,7 @@ services:
     networks:
       - backend
     depends_on:
-      - app
+      - hub
 
   db:
     image: &db-image mysql:8.0
@@ -65,13 +80,13 @@ services:
       - backend
 
   cron:
-    image: ghcr.io/debeule/versioning-api/cron:latest
+    image: ghcr.io/debeule/news-analytics-dock/cron:latest
     build:
       context: .
       dockerfile: deploy/components/cron/workspace.Dockerfile
     container_name: cron
     restart: unless-stopped
-    volumes: *app-volumes
+    volumes: *hub-volumes
     tty: true
     networks:
       - backend
@@ -85,12 +100,12 @@ services:
       - backend
 
   worker:
-    image: *app-image
+    image: *hub-image
     container_name: worker
-    entrypoint: php artisan queue:work --timeout=300
+    entrypoint: php hub/artisan queue:work --timeout=300
     restart:  unless-stopped
     tty: true
-    volumes: *app-volumes
+    volumes: *hub-volumes
     networks:
       - backend
     depends_on:
