@@ -4,10 +4,11 @@ USER root
 
 WORKDIR /code
 
+COPY /hub /code
+
 COPY deploy/components/hub/setup.sh .
 RUN chmod u+x /code/setup.sh && /code/setup.sh
 
-COPY /hub /code
 
 USER app
 
