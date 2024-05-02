@@ -14,5 +14,3 @@ ENV CHROME_PATH /usr/bin/google-chrome
 EXPOSE 5000 
 
 CMD ["python3", "app.py"]
-
-
