@@ -11,3 +11,18 @@ on:
       - 'docker-compose.yml'
       - 'deploy/**'
     branches: [ "main" ]
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v2
+
+      - name: Build hub image
+        run: docker compose build hub
+
+      - name: Push images to GHCR
+        run: docker compose push
