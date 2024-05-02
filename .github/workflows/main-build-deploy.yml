@@ -1,0 +1,13 @@
+name: Build and deploy images
+
+on:
+  push:
+    paths:
+      - 'docker-compose.yml'
+      - 'deploy/**'
+    branches: [ main ]
+  pull_request:
+    paths:
+      - 'docker-compose.yml'
+      - 'deploy/**'
+    branches: [ "main" ]
