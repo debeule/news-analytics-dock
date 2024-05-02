@@ -26,6 +26,8 @@ docker-php-ext-install \
 # Install redis
 pecl install redis
 
+composer install
+
 addgroup -g 1000 -S app \
     && adduser -u 1000 -S app -G app \
     && chown app .
