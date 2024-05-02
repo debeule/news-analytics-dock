@@ -1,6 +1,6 @@
 [submodule "scraper"]
 	path = scraper
-	url = https://github.com/debeule/news-analytics-scraper
+	url = git@github.com:debeule/news-analytics-scraper.git
 [submodule "hub"]
 	path = hub
-	url = https://github.com/debeule/news-analytics-hub
+	url = git@github.com:debeule/news-analytics-hub.git
