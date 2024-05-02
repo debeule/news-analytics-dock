@@ -28,5 +28,11 @@ jobs:
       - name: Build hub image
         run: docker compose build hub
 
+      - name: Build cron image
+        run: docker compose build cron
+
+      - name: Build scraper image
+        run: docker compose build scraper
+
       - name: Push images to GHCR
         run: docker compose push
