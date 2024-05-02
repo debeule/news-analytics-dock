@@ -5,5 +5,5 @@ apt-get update && apt-get install -y \
     libmariadb-dev-compat \
     pkg-config \
     adduser
-    
-pip install --no-cache-dir -r /code/requirements.txt
+
+pip install --no-cache-dir -r requirements.txt
