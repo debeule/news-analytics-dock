@@ -1,0 +1,38 @@
+name: run tests
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Login to GHCR
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GHCR_TOKEN }}
+
+    - name: test
+      run: docker compose pull
+      
+    - name: setup container
+      run: sudo docker compose up --no-build --wait
+
+    - name: install project
+      run: sudo docker exec -u 0 hub composer setup
+
+    - name: setup databases
+      run: sudo docker exec -u 0 app composer testing:migrate
+
+    - name: add permissions to phpunit executable
+      run: sudo docker exec -u 0 app chmod 777 vendor/bin/phpunit
+        
+    - name: Execute tests - PHPUnit
+      run: sudo docker exec -u 0 app vendor/bin/phpunit
