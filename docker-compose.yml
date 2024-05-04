@@ -8,6 +8,7 @@ services:
     restart: unless-stopped
     tty: true
     volumes: &hub-volumes
+      - ./hub:/code:delegated
       - ./deploy/components/hub/php.ini:/usr/local/etc/php/conf.d/php.ini
     networks:
       - backend
@@ -23,12 +24,16 @@ services:
         context: .
         dockerfile: deploy/components/scraper/workspace.Dockerfile
     container_name: scraper
+    restart: unless-stopped
+    tty: true
+    volumes:
+        - ./scraper:/code:delegated
     ports:
         - "5000:5000"
     networks:
         - backend
     depends_on:
-        - db-raw
+        - db
         - redis
 
   server:
@@ -46,30 +51,17 @@ services:
     depends_on:
       - hub
 
-  db-raw:
-    image: &db-image mysql:8.0
-    container_name: db-raw
-    restart: unless-stopped
-    tty: true
-    ports:
-      - 3308:3306
-    environment: &db-environment
-      MYSQL_DATABASE: news-analytics
-      MYSQL_ROOT_PASSWORD: news-analytics
-      MYSQL_ROOT_HOST: '%'
-    volumes:
-      - dbdata-raw:/var/lib/mysql
-    networks:
-      - backend
-
   db:
-    image: *db-image
+    image: &db-image mysql:8.0
     container_name: db
     restart: unless-stopped
     tty: true
     ports:
       - 3306:3306
-    environment: *db-environment
+    environment: &db-environment
+      MYSQL_DATABASE: news-analytics
+      MYSQL_ROOT_PASSWORD: news-analytics
+      MYSQL_ROOT_HOST: '%'
     volumes:
       - dbdata:/var/lib/mysql
     networks:
@@ -128,8 +120,6 @@ networks:
 
 volumes:
   dbdata:
-    driver: local
-  dbdata-raw:
     driver: local
   dbdata-testing:
     driver: local
