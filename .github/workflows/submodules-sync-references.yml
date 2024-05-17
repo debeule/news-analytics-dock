@@ -1,11 +1,8 @@
 name: 'Submodules Sync'
 
 on:
-  pull_request:
-    types: [closed]
-    paths: 
-      - '/hub'
-      - '/scraper'
+  repository_dispatch:
+    types: [update]
 
 jobs:
   sync:
