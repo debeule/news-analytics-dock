@@ -1,28 +1,33 @@
-# Docker
-# Build a Docker image
-# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+name: CI/CD Pipeline
 
-trigger:
-- main
+on:
+  push:
+    branches:
+      - deploy
 
-resources:
-- repo: self
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-variables:
-  tag: '$(Build.BuildId)'
+    - uses: actions/checkout@v4
+        with:
+          submodules: true
+          token: ${{ secrets.GHCR_TOKEN }}
 
-stages:
-- stage: Build
-  displayName: Build image
-  jobs:
-  - job: Build
-    displayName: Build
-    pool:
-      vmImage: ubuntu-latest
-    steps:
-    - task: Docker@2
-      displayName: Build images
-      inputs:
-        command: docker compose pull
-        command: docker compose up -d
-        command: docker exec hub composer start
+    - name: Login to GHCR
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GHCR_TOKEN }}
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: pull images
+      run: docker compose pull
+
+    - name: setup container
+      run: docker compose up -d --wait
