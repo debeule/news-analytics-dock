@@ -30,8 +30,8 @@ jobs:
 
     - name: install project
       run: |
-      sudo docker exec -u 0 hub composer install
-      sudo docker exec -u 0 hub composer start
+        sudo docker exec -u 0 hub composer install
+        sudo docker exec -u 0 hub composer start
 
     - name: setup databases
       run: sudo docker exec -u 0 app composer testing:migrate
