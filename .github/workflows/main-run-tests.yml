@@ -31,9 +31,9 @@ jobs:
     - name: install project
       run: |
         sudo docker exec -u 0 hub composer install
-        sudo docker exec -u 0 hub composer start
+        sudo docker exec -u 0 hub composer setup
 
-    - name: setup databases
+    - name: setup database
       run: sudo docker exec -u 0 hub composer testing
 
     - name: add permissions to phpunit executable
