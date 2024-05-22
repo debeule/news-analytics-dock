@@ -1,0 +1,45 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [deploy]
+
+jobs:
+  deployment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          token: ${{ secrets.GHCR_TOKEN }}
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_TOKEN }}
+
+
+      - name: Authenticate with Google Cloud
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}'
+
+      - name: Set up gcloud SDK
+        uses: 'google-github-actions/setup-gcloud@v2'
+
+      - name: Connect to VM && run commands
+        uses: google-github-actions/ssh-compute@v1
+        with:
+          instance_name: 'instance-20240522-125159'
+          zone: 'us-central1-f'
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          command: |
+            cd /home/debeulematthias/news-analytics-dock/
+            git pull origin deploy
+            git submodule update --init --recursive
+            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u debeule --password-stdin
+            docker compose pull
+            docker compose down
+            docker compose up -d
