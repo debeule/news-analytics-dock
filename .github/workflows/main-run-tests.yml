@@ -34,10 +34,10 @@ jobs:
         sudo docker exec -u 0 hub composer start
 
     - name: setup databases
-      run: sudo docker exec -u 0 app composer testing:migrate
+      run: sudo docker exec -u 0 hub composer testing
 
     - name: add permissions to phpunit executable
-      run: sudo docker exec -u 0 app chmod 777 vendor/bin/phpunit
+      run: sudo docker exec -u 0 hub chmod 777 vendor/bin/phpunit
         
     - name: Execute tests - PHPUnit
-      run: sudo docker exec -u 0 app vendor/bin/phpunit
+      run: sudo docker exec -u 0 hub vendor/bin/phpunit
