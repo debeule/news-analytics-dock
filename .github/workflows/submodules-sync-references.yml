@@ -2,7 +2,7 @@ name: 'Submodules Sync'
 
 on:
   repository_dispatch:
-    types: [update]
+    types: [submodules-sync]
 
 jobs:
   sync:
