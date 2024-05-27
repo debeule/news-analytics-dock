@@ -94,13 +94,13 @@ services:
       - backend
 
   redis:
-    image: redis:alpine
+    build:
+      context: .
+      dockerfile: deploy/components/redis/workspace.Dockerfile
     container_name: redis
     ports:
       - 6379:6379
     restart: unless-stopped
-    volumes:
-      - ./deploy/components/redis/redis.conf:/usr/local/etc/redis/redis.conf
     networks:
       - backend
 
