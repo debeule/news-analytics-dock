@@ -94,9 +94,7 @@ services:
       - backend
 
   redis:
-    build:
-      context: .
-      dockerfile: deploy/components/redis/workspace.Dockerfile
+    image: redis:alpine
     container_name: redis
     ports:
       - 6379:6379
