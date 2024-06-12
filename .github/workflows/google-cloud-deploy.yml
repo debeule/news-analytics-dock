@@ -37,8 +37,7 @@ jobs:
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           command: |
             cd /home/debeulematthias/news-analytics-dock/
-            git pull origin deploy
-            git submodule update --init --recursive
+            git pull --recurse-submodules origin deploy
             echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u debeule --password-stdin
             docker compose pull
             docker compose down
